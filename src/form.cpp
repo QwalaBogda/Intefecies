@@ -34,7 +34,7 @@ void Form::start() {
     }
 }
 
-QVector<int> Form::boyerMooreSearch(const QString &text, const QString &pattern) {
+QVector<int> boyerMooreSearch(const QString &text, const QString &pattern) {
     QVector<int> indices;
     int n = text.length();
     int m = pattern.length();
@@ -66,4 +66,20 @@ QVector<int> Form::boyerMooreSearch(const QString &text, const QString &pattern)
     }
 
     return indices;
+}
+
+QLineEdit* Form::getTextLineEdit() const {
+    return ui->str;
+}
+
+QLineEdit* Form::getSubStringLineEdit() const {
+    return ui->sub_str;
+}
+
+QPushButton* Form::getSearchButton() const {
+    return ui->pushButton;
+}
+
+QLabel* Form::getResultLabel() const {
+    return ui->result;
 }
