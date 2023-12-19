@@ -17,8 +17,6 @@ public:
 
 public slots:
     void start();
-
-private slots:
     QVector<int> boyerMooreSearch(const QString &text, const QString &pattern);
 
 private:
