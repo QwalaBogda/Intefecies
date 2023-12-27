@@ -2,6 +2,11 @@
 #define FORM_H
 
 #include <QWidget>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QLabel>
+
+#include "boyermoresearch.h"
 
 namespace Ui {
 class Form;
@@ -18,11 +23,13 @@ public:
 public slots:
     void start();
 
-private slots:
-    QVector<int> boyerMooreSearch(const QString &text, const QString &pattern);
-
 private:
     Ui::Form *ui;
+    BoyerMooreSearch boyerMooreSearch;  // Using the BoyerMooreSearch class
+    QLineEdit* getTextLineEdit() const;
+    QLineEdit* getSubStringLineEdit() const;
+    QPushButton* getSearchButton() const;
+    QLabel* getResultLabel() const;
 };
 
 #endif // FORM_H

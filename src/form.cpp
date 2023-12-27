@@ -1,6 +1,8 @@
 #include "form.h"
-#include "ui_form.h"
-
+#include "qdebug.h"
+#include "qelapsedtimer.h"
+#include "ui_Form.h"
+#include "boyermoresearch.h"
 
 Form::Form(QWidget *parent) :
     QWidget(parent),
@@ -20,50 +22,50 @@ Form::~Form()
 void Form::start() {
     QString str = ui->str->text();
     QString sub_str = ui->sub_str->text();
+    BoyerMooreSearch bm;
 
-    QVector<int> result = boyerMooreSearch(str, sub_str);
+    QElapsedTimer timer;
+    timer.start();
 
-    if (result.isEmpty()) {
+    QVector<int> bmResult = bm.search(str, sub_str);
+
+    qint64 bmElapsedNanos = timer.nsecsElapsed();
+    timer.restart();
+
+    QVector<int> idxResult;
+    int pos = 0;
+    while ((pos = str.indexOf(sub_str, pos)) != -1) {
+        idxResult.append(pos);
+        pos += sub_str.size();
+    }
+
+    qint64 idxElapsedNanos = timer.nsecsElapsed();
+
+    if (bmResult.isEmpty() && idxResult.isEmpty()) {
         ui->result->setText("Substring not found");
     } else {
         QString resultString;
-        for (int i : result) {
+        for (int i : idxResult) {
             resultString.append(QString::number(i) + " ");
         }
         ui->result->setText(resultString);
+        qDebug() << "Time taken by Boyer-Moore: " << bmElapsedNanos << " ns";
+        qDebug() << "Time taken by indexOf: " << idxElapsedNanos << " ns";
     }
 }
 
-QVector<int> Form::boyerMooreSearch(const QString &text, const QString &pattern) {
-    QVector<int> indices;
-    int n = text.length();
-    int m = pattern.length();
+QLineEdit* Form::getTextLineEdit() const{
+    return ui->str;
+}
 
-    if (m == 0 || m > n) {
-        return indices;
-    }
+QLineEdit* Form::getSubStringLineEdit() const{
+    return ui->sub_str;
+}
 
-    QVector<int> badChar(256, -1);
+QPushButton* Form::getSearchButton() const{
+    return ui->pushButton;
+}
 
-    for (int i = 0; i < m; ++i) {
-        badChar[pattern[i].toLatin1()] = i;
-    }
-
-    int s = 0;
-    while (s <= n - m) {
-        int j = m - 1;
-
-        while (j >= 0 && pattern[j] == text[s + j]) {
-            --j;
-        }
-
-        if (j < 0) {
-            indices.append(s);
-            s += m;
-        } else {
-            s += std::max(1, j - badChar[text[s + j].toLatin1()]);
-        }
-    }
-
-    return indices;
+QLabel* Form::getResultLabel() const{
+    return ui->result;
 }
